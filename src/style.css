@@ -1,0 +1,76 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body, #app {
+  height: 100%;
+}
+
+body {
+  background-color: #F8F6EF;
+  color: #0B3D2E;
+  -webkit-font-smoothing: antialiased;
+}
+
+html {
+  /* Prevent accidental horizontal panning during route transitions. */
+  overflow-x: hidden;
+}
+
+body[dir='rtl'] {
+  font-family: 'IBM Plex Sans Arabic', system-ui, sans-serif;
+}
+body[dir='ltr'] {
+  font-family: 'Inter', system-ui, sans-serif;
+}
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-thumb { background: #DCD8CC; border-radius: 4px; }
+
+/* ------------------------------------------------------------------ */
+/* Route transitions — subtle fade/slide, quick and professional.      */
+/* ------------------------------------------------------------------ */
+.page-enter-active,
+.page-leave-active {
+  transition: opacity 0.22s ease, transform 0.22s ease;
+}
+
+.page-enter-from {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.page-leave-to {
+  opacity: 0;
+  transform: translateY(-6px);
+}
+
+/* Shared micro-transitions for form feedback (validation, API errors). */
+.field-error-enter-active,
+.field-error-leave-active {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.field-error-enter-from,
+.field-error-leave-to {
+  opacity: 0;
+  transform: translateY(-2px);
+}
+
+.card-surface {
+  background: #FFFFFF;
+  border: 1px solid #E7E4DA;
+  border-radius: 1.25rem;
+  box-shadow: 0 1px 3px 0 rgba(11,61,46,0.05);
+}
+
+.btn-primary-dark {
+  background: #0B3D2E;
+  color: #fff;
+  border-radius: 9999px;
+  font-weight: 600;
+  transition: background-color .15s ease;
+}
+.btn-primary-dark:hover { background: #063B2E; }
+.btn-primary-dark:disabled { opacity: .5; cursor: not-allowed; }
