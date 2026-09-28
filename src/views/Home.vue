@@ -453,10 +453,10 @@ const journeyLabel = computed(() => {
       <div
         class="flex items-center justify-between text-[11px] text-marathon-dark/40"
       >
-        <span>سفر الرؤيا 22</span>
-        <span>الرسائل</span>
-        <span>أعمال الرسل</span>
-        <span>الأناجيل (متى 10)</span>
+      <span>الأناجيل</span>
+      <span>أعمال الرسل</span>
+      <span>الرسائل</span>
+        <span>سفر الرؤيا </span>
       </div>
     </div>
 
