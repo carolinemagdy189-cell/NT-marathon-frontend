@@ -89,6 +89,16 @@ router.beforeEach(async (to) => {
     return { path: auth.homeRoute }
   }
 
+  /*
+   * Role priority over marathon state: the admin is NEVER shown the normal
+   * user dashboard (which displays the "marathon not started" state before
+   * 2026-10-01). Admins land on the admin dashboard before, during and
+   * after the marathon. Checked AFTER the role/role guard above.
+   */
+  if (auth.isAdmin && to.name === 'home') {
+    return { path: '/admin' }
+  }
+
   return true
 })
 

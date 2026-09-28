@@ -116,7 +116,14 @@ export const useAuthStore = defineStore('auth', {
       this.isLoading = true
       try {
         const { data } = await api.get('/auth/me')
-        this._setSession({ token, user: data.data })
+        /*
+         * Role safety on refresh: keep the cached role if /auth/me ever
+         * returns a user without one, so an admin refreshing /admin is not
+         * silently demoted to the normal user dashboard.
+         */
+        const me = data.data ?? {}
+        const user = me.role ? me : { ...me, role: this.user?.role }
+        this._setSession({ token, user })
         return this.user
       } catch {
         // 401s are already cleared globally by the axios interceptor; any
