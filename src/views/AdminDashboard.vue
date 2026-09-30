@@ -403,7 +403,7 @@ function fmtDate(iso) {
               لا توجد سجلات قراءة لهذا اليوم بعد.
             </td>
           </tr>
-          <tr v-for="p in admin.pagedParticipants" :key="p.id" class="border-b border-marathon-border last:border-0 hover:bg-marathon-cream/60">
+          <tr v-for="p in admin.visibleParticipants" :key="p.id" class="border-b border-marathon-border last:border-0 hover:bg-marathon-cream/60">
             <td class="py-3 px-4">
               <div class="flex items-center gap-2.5">
                 <div class="w-8 h-8 rounded-full bg-marathon-light flex items-center justify-center text-xs font-bold text-marathon-dark shrink-0">
@@ -457,48 +457,26 @@ function fmtDate(iso) {
         لا توجد سجلات قراءة لهذا اليوم بعد — جميع المشاركين في حالة «لم يسجل».
       </div>
 
-      <div class="flex items-center justify-between px-4 py-3 text-xs text-marathon-dark/45 border-t border-marathon-border">
+      <div class="flex items-center justify-between gap-2 flex-wrap px-4 py-3 text-xs text-marathon-dark/45 border-t border-marathon-border">
         <span>
           سجلات {{ selectedReading ? `اليوم ${admin.selectedDayNumber} (${selectedReading})` : `اليوم ${admin.selectedDayNumber ?? ''}` }} •
-          عرض {{ admin.pagedParticipants.length }} من أصل {{ admin.filteredParticipants.length }} مشاركًا •
+          عرض جميع المشاركين المطابقين ({{ admin.visibleParticipants.length }}) بلا ترقيم •
           تزامن تلقائي كل 60 ثانية
         </span>
-        <div class="flex items-center gap-1">
-          <button
-            type="button"
-            class="px-2 py-1 rounded hover:bg-marathon-gray/40 disabled:opacity-40"
-            :disabled="admin.page <= 1"
-            @click="admin.setPage(admin.page - 1)"
-          >السابق</button>
-          <button
-            v-for="n in admin.pageCount"
-            :key="n"
-            type="button"
-            class="w-7 h-7 rounded-full"
-            :class="n === admin.page ? 'bg-marathon-dark text-white' : 'hover:bg-marathon-gray/40'"
-            @click="admin.setPage(n)"
-          >{{ n }}</button>
-          <button
-            type="button"
-            class="px-2 py-1 rounded hover:bg-marathon-gray/40 disabled:opacity-40"
-            :disabled="admin.page >= admin.pageCount"
-            @click="admin.setPage(admin.page + 1)"
-          >التالي</button>
-        </div>
       </div>
     </div>
 
     <!-- Mobile participant cards -->
     <div class="md:hidden space-y-3">
-      <div v-for="p in admin.pagedParticipants" :key="p.id" class="card-surface p-4">
-        <div class="flex items-start justify-between mb-2">
-          <span class="text-xs font-semibold px-2.5 py-1 rounded-full" :class="statusStyle(p.status)">
+      <div v-for="p in admin.visibleParticipants" :key="p.id" class="card-surface p-4">
+        <div class="flex items-start justify-between gap-2 mb-2">
+          <span class="shrink-0 text-xs font-semibold px-2.5 py-1 rounded-full" :class="statusStyle(p.status)">
             {{ statusText(p.status) }} ({{ p.chaptersRead }} من {{ p.chaptersRequired }})
           </span>
-          <div class="flex items-center gap-2">
-            <div class="text-right">
-              <p class="font-bold text-marathon-darker text-sm">{{ p.name }}</p>
-              <p class="text-[11px] text-marathon-dark/40">{{ p.email }}</p>
+          <div class="flex items-center gap-2 min-w-0">
+            <div class="text-right min-w-0">
+              <p class="font-bold text-marathon-darker text-sm break-words">{{ p.name }}</p>
+              <p class="text-[11px] text-marathon-dark/40 break-all">{{ p.email }}</p>
             </div>
             <div class="w-8 h-8 rounded-full bg-marathon-light flex items-center justify-center text-xs font-bold text-marathon-dark shrink-0">
               {{ p.initials }}
@@ -506,14 +484,14 @@ function fmtDate(iso) {
           </div>
         </div>
 
-        <div class="flex items-center justify-between text-xs text-marathon-dark/55 mb-2">
+        <div class="flex items-center justify-between gap-2 flex-wrap text-xs text-marathon-dark/55 mb-2">
           <span>{{ p.percent }}%</span>
           <span>المطلوب: {{ p.targetToday }}</span>
         </div>
         <div class="h-1.5 rounded-full bg-marathon-gray overflow-hidden mb-2">
           <div class="h-1.5 bg-marathon-dark" :style="{ width: p.percent + '%' }"></div>
         </div>
-        <div class="flex items-center justify-between text-xs text-marathon-dark/50 mb-2">
+        <div class="flex items-center justify-between gap-2 flex-wrap text-xs text-marathon-dark/50 mb-2">
           <span>متبقي {{ p.remaining }} إصحاح</span>
           <span>إجمالي الرحلة: {{ p.totalRead }} من {{ p.totalChapters }}</span>
         </div>
@@ -525,19 +503,19 @@ function fmtDate(iso) {
 
         <p v-if="p.note" class="flex items-start gap-1.5 text-xs text-marathon-dark/55 bg-marathon-cream rounded-xl p-2.5 mb-2">
           <MessageSquare :size="13" class="shrink-0 mt-0.5" />
-          <span>«{{ p.note }}»</span>
+          <span class="min-w-0 flex-1 break-words">«{{ p.note }}»</span>
         </p>
 
         <div class="flex items-center gap-2 mt-2">
           <button
             v-if="p.status === 'not_registered'"
             type="button"
-            class="btn-primary-dark flex-1 py-2 text-xs flex items-center justify-center gap-1.5"
+            class="btn-primary-dark flex-1 py-2.5 text-xs flex items-center justify-center gap-1.5"
           >
             <Bell :size="13" />
             <span>إرسال تذكير بالمحبة</span>
           </button>
-          <button type="button" class="flex-1 border border-marathon-border rounded-full py-2 text-xs font-semibold text-marathon-dark/70 flex items-center justify-center gap-1.5" @click="openDetails(p.id)">
+          <button type="button" class="flex-1 border border-marathon-border rounded-full py-2.5 text-xs font-semibold text-marathon-dark/70 flex items-center justify-center gap-1.5" @click="openDetails(p.id)">
             <span>عرض التفاصيل الكاملة</span>
             <ChevronLeft :size="13" />
           </button>

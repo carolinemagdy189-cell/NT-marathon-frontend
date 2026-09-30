@@ -26,8 +26,6 @@ export const useAdminStore = defineStore('admin', {
     readingsDate: null, // raw /admin/readings payload (per-date rows)
     progressOverview: null, // raw /admin/progress payload
     filters: { status: 'all', search: '' },
-    page: 1,
-    pageSize: 10,
     totalUsers: 0,
     loading: false,
     error: null,
@@ -105,13 +103,13 @@ export const useAdminStore = defineStore('admin', {
       return list
     },
 
-    pageCount() {
-      return Math.max(1, Math.ceil(this.filteredParticipants.length / this.pageSize))
-    },
-
-    pagedParticipants() {
-      const start = (this.page - 1) * this.pageSize
-      return this.filteredParticipants.slice(start, start + this.pageSize)
+    /**
+     * كل المشاركين المطابقين للفلاتر الحالية (حالة + بحث) — بلا ترقيم.
+     * الـ backend يعيد القائمة كاملة لليوم المحدد (users[] في /admin/dashboard)،
+     * فكل تبويبات الحالة تعرض نتائجها الكاملة دفعة واحدة.
+     */
+    visibleParticipants() {
+      return this.filteredParticipants
     },
 
     statusCounts(state) {
@@ -258,11 +256,6 @@ export const useAdminStore = defineStore('admin', {
 
     setFilter(key, value) {
       this.filters[key] = value
-      this.page = 1
-    },
-
-    setPage(value) {
-      this.page = Math.min(Math.max(1, value), this.pageCount)
     },
 
     /**
